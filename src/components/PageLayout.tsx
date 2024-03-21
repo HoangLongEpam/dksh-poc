@@ -2,11 +2,21 @@ import { QueryClientKey } from "@/constants/QueryClientKey";
 import { QueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
+import { useEffect } from "react";
 
 export const PageLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const queryClient = new QueryClient();
   const currentRoute = "/" + router.route.split("/")[1].toLowerCase();
+
+  useEffect(() => {
+    const user = localStorage?.getItem(QueryClientKey.UserInfo);
+    if (!user && currentRoute !== "/login") {
+      router.push("/login");
+    }
+  }, []);
+  
+
 
   const showSidebar = currentRoute !== "/login";
 

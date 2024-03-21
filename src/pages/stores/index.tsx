@@ -30,8 +30,10 @@ export default function Stores() {
 
   useEffect(() => {
     const user = localStorage?.getItem(QueryClientKey.UserInfo);
-    console.log(user);
     setUser(user || "");
+    if (!user) {
+      router.push("/login");
+    }
   }, []);
 
   const { data } = useQuery({
@@ -39,7 +41,7 @@ export default function Stores() {
     queryFn: () => getStoresApi(),
   });
 
-  const stores = user === "market_lead" ? data : [data?.[0]];
+  const stores = user === "market_lead" ? data as Store[] : [data?.[0]] as Store[]
 
   const { t } = useTranslation();
 
@@ -71,7 +73,7 @@ export default function Stores() {
             {stores?.map((store) => {
               return (
                 <tr
-                  key={store.id}
+                  key={store?.id}
                   className="border border-gray-200 cursor-pointer hover:bg-gray-100 transition-colors duration-200 ease-in-out"
                   onClick={() => handleStoreClick(store)}
                 >
