@@ -2,21 +2,28 @@ import { QueryClientKey } from "@/constants/QueryClientKey";
 import { QueryClient } from "@tanstack/react-query";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export const PageLayout = ({ children }: { children: React.ReactNode }) => {
   const router = useRouter();
   const queryClient = new QueryClient();
   const currentRoute = "/" + router.route.split("/")[1].toLowerCase();
+  const [user, setUser] = useState<{
+    username: string;
+    role: string;
+    permissions: string;
+  } | null>(null);
 
   useEffect(() => {
     const user = localStorage?.getItem(QueryClientKey.UserInfo);
     if (!user && currentRoute !== "/login") {
       router.push("/login");
     }
-  }, [currentRoute, router]);
-  
 
+    if (user) {
+      setUser(JSON?.parse(user));
+    }
+  }, [currentRoute, router]);
 
   const showSidebar = currentRoute !== "/login";
 
@@ -46,18 +53,6 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
             >
               Stores
             </Link>
-            <Link
-              href="/"
-              className="text-gray-800 text-sm hover:text-gray-900 transition-colors duration-200 ease-in-out mt-4"
-            >
-              Customers
-            </Link>
-            <Link
-              href="/"
-              className="text-gray-800 text-sm hover:text-gray-900 transition-colors duration-200 ease-in-out mt-4"
-            >
-              Categories
-            </Link>
             <div className="mt-4">
               <div
                 onClick={handleSignOut}
@@ -69,7 +64,8 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
           </div>
         </div>
       )}
-      <div className="w-full flex justify-center mt-10 px-8">
+      <div className="w-full flex flex-col items-center mt-10 px-8">
+        <div>{user?.role}</div>
         <div className="w-full max-w-screen-lg">{children}</div>
       </div>
     </main>

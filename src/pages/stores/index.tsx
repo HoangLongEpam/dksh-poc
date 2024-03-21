@@ -26,14 +26,19 @@ export const getServerSideProps = async () => {
 
 export default function Stores() {
   const router = useRouter();
-  const [user, setUser] = useState("");
+  const [user, setUser] = useState<{
+    username: string;
+    role: string;
+  }>();
 
   useEffect(() => {
-    const user = localStorage?.getItem(QueryClientKey.UserInfo);
-    setUser(user || "");
+    const user = JSON?.parse(
+      localStorage?.getItem(QueryClientKey.UserInfo) || ""
+    );
     if (!user) {
       router.push("/login");
     }
+    setUser(user);
   }, []);
 
   const { data } = useQuery({
@@ -41,7 +46,23 @@ export default function Stores() {
     queryFn: () => getStoresApi(),
   });
 
-  const stores = user === "market_lead" ? data as Store[] : [data?.[0]] as Store[]
+  const stores = data?.filter((store) => {
+    if (user?.username === "market_lead" || user?.username === "super_admin") {
+      return store;
+    }
+
+    if (user?.username === "sale_admin_vietnam") {
+      return store.key == "healthcare_store_vietnam";
+    }
+
+    if (user?.username === "sale_admin_singapore") {
+      return store.key == "healthcare_store_singapore";
+    }
+
+    return store.key === "store_1";
+  });
+
+  // const stores = user === "market_lead" ? data as Store[] : [data?.[0]] as Store[]
 
   const { t } = useTranslation();
 

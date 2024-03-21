@@ -1,4 +1,5 @@
 import { QueryClientKey } from "@/constants/QueryClientKey";
+import { UserInfo } from "@/constants/User";
 import { QueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/router";
 import { use, useEffect, useState } from "react";
@@ -6,6 +7,7 @@ import { use, useEffect, useState } from "react";
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
+  const [error, setError] = useState("");
   const router = useRouter();
   const queryClient = new QueryClient();
 
@@ -19,18 +21,43 @@ export default function Login() {
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
 
+    if(password !== "Apple@123"){
+      setError("Invalid credentials");
+      setPassword("");
+      return;
+    }
+
     switch (username) {
-      case "market_lead":
-        // queryClient.setQueryData([QueryClientKey.UserInfo], username);
-        localStorage.setItem(QueryClientKey.UserInfo, username);
+      case "super_admin":
+        localStorage.setItem(
+          QueryClientKey.UserInfo,
+          JSON.stringify(UserInfo.admin)
+        );
         router.push("/");
         break;
-      case "sales":
-        // queryClient.setQueryData([QueryClientKey.UserInfo], username);
-        localStorage.setItem(QueryClientKey.UserInfo, username);
+      case "market_lead":
+        localStorage.setItem(
+          QueryClientKey.UserInfo,
+          JSON.stringify(UserInfo.lead)
+        );
         router.push("/");
+        break;
+      case "sale_admin_vietnam":
+        localStorage.setItem(
+          QueryClientKey.UserInfo,
+          JSON.stringify(UserInfo.sale_vn)
+        );
+        router.push("/");
+        break;
+      case "sale_admin_singapore":
+        localStorage.setItem(
+          QueryClientKey.UserInfo,
+          JSON.stringify(UserInfo.sale_sg)
+        );
+        router.push("/");
+        break;
       default:
-        console.log("default");
+        setError("Invalid credentials");
         break;
     }
 
@@ -62,6 +89,7 @@ export default function Login() {
             onChange={(e) => setPassword(e.target.value)}
           />
         </div>
+        {error && <div className="text-red-500 text-sm mt-2">{error}</div>}
         <button
           className="text-white bg-cyan-500 border py-1 px-4 rounded mt-5"
           type="submit"

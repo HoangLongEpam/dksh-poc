@@ -121,12 +121,12 @@ export default function ProductByStore() {
                     <td className="pl-4 py-2">
                       {t(product?.masterData?.current?.name)}
                     </td>
-                    <td className="pl-4 py-2">{product.key}</td>
+                    <td className="pl-4 py-2">{product?.key}</td>
                     <td className="pl-4 py-2">
-                      {dayjs(product.createdAt).format(TimeFormat.DateTime)}
+                      {dayjs(product?.createdAt).format(TimeFormat.DateTime)}
                     </td>
                     <td className="pl-4 py-2">
-                      {dayjs(product.lastModifiedAt).format(
+                      {dayjs(product?.lastModifiedAt).format(
                         TimeFormat.DateTime
                       )}
                     </td>
