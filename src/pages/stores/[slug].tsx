@@ -16,7 +16,7 @@ import dayjs from "dayjs";
 import { GetServerSideProps } from "next";
 import { useRouter } from "next/router";
 import stores from ".";
-import { Product } from "@commercetools/platform-sdk";
+import { AssignedProductReference, Product } from "@commercetools/platform-sdk";
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -55,6 +55,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 export default function ProductByStore() {
   const router = useRouter();
+  const { t } = useTranslation();
 
   const ID = router.query.slug as string;
 
@@ -68,12 +69,10 @@ export default function ProductByStore() {
     queryFn: () => getProductsByProductSelectionIdApi(ID),
   });
 
-  if (!productsRef || productsRef.length === 0) {
-    return <div>No products</div>;
-  }
+
 
   const results = useQueries({
-    queries: productsRef?.map((product) => {
+    queries: (productsRef as AssignedProductReference[])?.map((product) => {
       return {
         queryKey: [QueryClientKey.GetProductById, product?.product?.id],
         queryFn: () => getProductByIdApi(product?.product?.id),
@@ -81,13 +80,17 @@ export default function ProductByStore() {
     }),
   });
 
+  if (!productsRef || productsRef.length === 0) {
+    return <div>No products</div>;
+  }
+
+
+  
+
   const products = results.map((result) => {
     return result.data as Product;
   });
 
-  console.log(products);
-
-  const { t } = useTranslation();
 
   return (
     <div>

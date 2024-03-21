@@ -14,7 +14,7 @@ export const PageLayout = ({ children }: { children: React.ReactNode }) => {
     if (!user && currentRoute !== "/login") {
       router.push("/login");
     }
-  }, []);
+  }, [currentRoute, router]);
   
 
 

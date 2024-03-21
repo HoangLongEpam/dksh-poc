@@ -14,7 +14,7 @@ export default function Login() {
     if (userInfo) {
       router.push("/");
     }
-  }, []);
+  }, [router]);
 
   const handleSignIn = (e: React.FormEvent) => {
     e.preventDefault();
